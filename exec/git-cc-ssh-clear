@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  export nm_user="$1"; shift
+
+  aws iam list-ssh-public-keys --user-name "$nm_user"| jq -r '.SSHPublicKeys[].SSHPublicKeyId' | runmany 'set -x; aws iam delete-ssh-public-key --user-name "$nm_user" --ssh-public-key-id "$1"'
+}
+
+source sub "$BASH_SOURCE" "$@"

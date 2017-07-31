@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+
+  case "$#" in
+    0)
+      local nm_repo="$(cat ".repo-name")"
+      ;;
+    *)
+  local nm_repo="$1"; shift
+      ;;
+  esac
+
+  local nm_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+  local nm_remote='gh'
+  git remote add ${nm_remote} meh 2>/dev/null || true
+  git remote set-url ${nm_remote} "git@github.com:$nm_repo"
+  git fetch ${nm_remote}
+  git branch --set-upstream-to "${nm_remote}/$nm_branch" || git push -u ${nm_remote} "$nm_branch"
+}
+
+source sub "$BASH_SOURCE" "$@"

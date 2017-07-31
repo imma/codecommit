@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  local nm_user="$1"; shift
+
+  aws iam list-ssh-public-keys --user-name "$nm_user"
+}
+
+source sub "$BASH_SOURCE" "$@"

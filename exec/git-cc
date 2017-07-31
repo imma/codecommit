@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+
+  case "$#" in
+    0)
+      local nm_repo="$(cat ".repo-name")"
+      ;;
+    *)
+      local nm_repo="$1"; shift
+      ;;
+  esac
+
+  local nm_repo="${nm_repo//\//--}"
+
+  if [[ "$#" == 0 ]]; then
+    set -- .
+  fi
+
+  aws codecommit get-repository --repository "$nm_repo" | jq '.repositoryMetadata' | jq -r "$@"
+}
+
+source sub "$BASH_SOURCE" "$@"

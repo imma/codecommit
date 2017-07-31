@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+function public_key {
+  if [[ -f "$pth_key" ]]; then
+    cat "$pth_key"
+  elif [[ "$pth_key" == "${pth_key//\/}" ]]; then
+    gpg2 --export-ssh-key "$pth_key"
+  else
+    echo ''
+  fi
+}
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  local nm_user="$1"; shift
+  local pth_key="$1"; shift
+
+  aws iam upload-ssh-public-key --user-name "$nm_user" --ssh-public-key-body "$(public_key "$pth_key")"
+}
+
+source sub "$BASH_SOURCE" "$@"
