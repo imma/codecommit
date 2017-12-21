@@ -15,7 +15,7 @@ function main {
 
   local nm_branch="$(git rev-parse --abbrev-ref HEAD)"
 
-  local nm_remote='gh'
+  local nm_remote='origin'
   git remote add ${nm_remote} meh 2>/dev/null || true
   git remote set-url ${nm_remote} "git@github.com:$nm_repo"
   git fetch ${nm_remote}
